@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
 	data = (data - data.mean(0)) / data.std(0)
 	N = len(data[0])
+	genes = N
 	T = len(data)
 
 	X = data
@@ -44,34 +45,34 @@ if __name__ == '__main__':
 
 	vif = [variance_inflation_factor(X, i) for i in range(N)]
 
-	data = X
+	data2 = X
 
 	X_list = []
 	Y_list = []
 
 	# t - 1
-	X_list.append(data[: -1])
+	X_list.append(data2[: -1])
 	Y_list.append(data[1 :])
 
 	# t - 2
-	X_list.append(data[: -2])
+	X_list.append(data2[: -2])
 	Y_list.append(data[2 :])
 
 	# t - 3
-	X_list.append(data[: -3])
+	X_list.append(data2[: -3])
 	Y_list.append(data[3 :])
 
 	# Prev 2 avg
-	X = np.zeros((len(data) - 2, len(data[0])))
-	for j in range(len(data) - 2):
-		X[j] = data[j : j + 2, :].mean(0)
+	X = np.zeros((len(data2) - 2, len(data2[0])))
+	for j in range(len(data2) - 2):
+		X[j] = data2[j : j + 2, :].mean(0)
 	X_list.append(X)
 	Y_list.append(data[2 :])
 
 	# Prev 3 avg
-	X = np.zeros((len(data) - 3, len(data[0])))
-	for j in range(len(data) - 3):
-		X[j] = data[j : j + 3, :].mean(0)
+	X = np.zeros((len(data2) - 3, len(data2[0])))
+	for j in range(len(data2) - 3):
+		X[j] = data2[j : j + 3, :].mean(0)
 	X_list.append(X)
 	Y_list.append(data[3 :])
 
@@ -79,17 +80,17 @@ if __name__ == '__main__':
 	binary_result_list = []
 	counts_list = []
 
-	for ds in range(5):
+	for ds in range(len(X_list)):
 		
 		X = X_list[ds]
 		N = len(X[0])
 		T = len(X)
 		X = np.c_[X, np.ones(len(X))]
 
-		result = np.zeros((N, N + 1))
-		counts = np.zeros((N, len(ACC_LIST)))
+		result = np.zeros((genes, N + 1))
+		counts = np.zeros((genes, len(ACC_LIST)))
 		
-		for i in range(N):
+		for i in range(genes):
 
 			y = Y_list[ds][:, i]
 			W = np.identity(T)
@@ -111,6 +112,7 @@ if __name__ == '__main__':
 			# for acc in [100, 20, 10, 5]
 			# 	counts.append(sum(sum(W >= acc)))
 		
+		result = result[:, : -1]
 		result_list.append(result)
 		binary_result_list.append(abs(result) > abs(result).mean(1).reshape(len(result), 1))
 		counts_list.append(counts)
