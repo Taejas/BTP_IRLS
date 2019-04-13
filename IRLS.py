@@ -4,6 +4,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 # File name
 FILE_NAME = 'sos1_49.csv'
+# FILE_NAME = 'artificial_5.csv'
 DELTA = 1e-5
 NUM_ITER = 10000
 PREV_TIME = 1
@@ -35,7 +36,7 @@ if __name__ == '__main__':
 	X = np.delete(X, 1, 1)
 
 	N = len(X[0])
-	X = (X - X.mean(0)) / X.std(0)
+	# X = (X - X.mean(0)) / X.std(0)
 
 	C = np.dot(X.T, X) / len(X)
 	mc = np.linalg.det(C)
